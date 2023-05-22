@@ -5,6 +5,13 @@
  */
 package isp_porject;
 
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,7 +38,68 @@ public class Supplier_Management extends javax.swing.JFrame {
         role=value;
         tableLode();
     }
-
+    
+    
+     public void generatePdfReport() {
+        try {
+    // Create a new PDF document
+    com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+    PdfWriter.getInstance(document, new FileOutputStream("supplier.pdf"));
+    document.open();
+    
+    // Create a table with the appropriate number of columns
+    PdfPTable table = new PdfPTable(9);
+    
+    // Set column widths
+    table.setWidthPercentage(100);
+    float[] columnWidths = {1, 2, 2, 2, 1, 3, 2, 2, 2};
+    table.setWidths(columnWidths);
+    
+    // Add table headers
+    PdfPCell cell = new PdfPCell(new Phrase("Supplier Report"));
+    cell.setBorder(Rectangle.BOX);
+    cell.setColspan(9);
+    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+    table.addCell(cell);
+    table.addCell("ID");
+    table.addCell("Supplier Name");
+    table.addCell("Company Name");
+    table.addCell("Address");
+    table.addCell("Prudect");
+    table.addCell("Mobile");
+    table.addCell("Supplier Code");
+    table.addCell("Supplier Email");
+    table.addCell("Supplier City");
+    
+    // Retrieve data from the database
+    String sql = "SELECT `id`, `sname`, `comapny`, `address`, `prudect`, `snumbe`, `scode`, `email`, `city` FROM `supplier`";
+    pst = conn.prepareStatement(sql);
+    rs = pst.executeQuery();
+    
+    // Add data to the table
+    while (rs.next()) {
+        table.addCell(rs.getString("id"));
+        table.addCell(rs.getString("sname"));
+        table.addCell(rs.getString("comapny"));
+        table.addCell(rs.getString("address"));
+        table.addCell(rs.getString("prudect"));
+        table.addCell(rs.getString("snumbe"));
+        table.addCell(rs.getString("scode"));
+        table.addCell(rs.getString("email"));
+        table.addCell(rs.getString("city"));
+    }
+    
+    // Add table to the document
+    document.add(table);
+    
+    // Close the document
+    document.close();
+    
+    JOptionPane.showMessageDialog(null, "Report generated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+} catch (Exception e) {
+    JOptionPane.showMessageDialog(null, "Error generating report: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+}
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -72,6 +140,7 @@ public class Supplier_Management extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -313,6 +382,15 @@ public class Supplier_Management extends javax.swing.JFrame {
             }
         });
 
+        jButton6.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8-health-graph-28.png"))); // NOI18N
+        jButton6.setText("Report");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -323,7 +401,9 @@ public class Supplier_Management extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(287, 287, 287))
+                        .addGap(107, 107, 107)
+                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(25, 25, 25))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -347,7 +427,9 @@ public class Supplier_Management extends javax.swing.JFrame {
                         .addGap(15, 15, 15)
                         .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(13, 13, 13)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -578,6 +660,10 @@ public class Supplier_Management extends javax.swing.JFrame {
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         clear();
     }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        generatePdfReport();
+    }//GEN-LAST:event_jButton6ActionPerformed
     public void tableLode() {
         try {
             String sql = "SELECT `id` as 'Supplier_Id', `sname` as 'Supplier_Name',`scode` as 'Supplier_Code', `email` as 'Supplier_Email', `city` as 'Supplier_City', `comapny` as 'Comapny', `address` as 'Supplier_Addrss', `prudect` as 'Product', `snumbe` as 'Supplier_number' FROM `supplier`";
@@ -647,6 +733,7 @@ public class Supplier_Management extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
